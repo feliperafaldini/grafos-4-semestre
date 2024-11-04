@@ -1,20 +1,29 @@
 import os
 from collections import deque
+
 os.system('cls')
 
-def depth_first_algorithm(grafo, inicio):
-    visitados = set()
-    fila = deque([inicio])
 
-    while fila:
-        vertice = fila.popleft()
+class DepthFirstAlgorithm:
+    def __init__(self, grafo, inicio):
+        self.grafo = grafo
+        self.inicio = inicio
 
-        if vertice not in visitados:
-            print(vertice, end = ' ')
-            visitados.add(vertice)
+    def __algorithm__(self):
+        visitados = set()
+        fila = deque([self.inicio])
 
-            for vizinho in grafo[vertice] - visitados:
-                depth_first_algorithm(grafo, vizinho, visitados)
+        while fila:
+            vertice = fila.popleft()
+
+            if vertice not in visitados:
+                print(vertice, end=' ')
+                visitados.add(vertice)
+
+                for vizinho in self.grafo[vertice] - visitados:
+                    self.__algorithm__(self.grafo, vizinho, visitados)
+
 
 if __name__ == "__main__":
-    depth_first_algorithm()
+    DFS = DepthFirstAlgorithm()
+    DFS.__algorithm__()

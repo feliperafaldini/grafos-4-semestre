@@ -1,18 +1,27 @@
 import os
 from collections import deque
+
 os.system('cls')
 
-def breadth_first_algorithm(grafo, inicio):
-    visitados = set()
-    fila = deque([inicio])
 
-    while fila:
-        vertice = fila.popleft()
+class BreadthFirstAlgorithm:
+    def __init__(self, grafo, inicio):
+        self.grafo = grafo
+        self.inicio = inicio
 
-        if vertice not in visitados:
-            print(vertice, end = ' ')
-            visitados.add(vertice)
-            fila.extend(grafo[vertice] - visitados)
+    def __algorithm__(self):
+        visitados = set()
+        fila = deque([self.inicio])
+
+        while fila:
+            vertice = fila.popleft()
+
+            if vertice not in visitados:
+                print(vertice, end=' ')
+                visitados.add(vertice)
+                fila.extend(self.grafo[vertice] - visitados)
+
 
 if __name__ == "__main__":
-    breadth_first_algorithm()
+    BFS = BreadthFirstAlgorithm()
+    BFS.__algorithm__()
