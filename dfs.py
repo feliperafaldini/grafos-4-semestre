@@ -1,7 +1,6 @@
 import os
-from collections import deque
 
-os.system('cls')
+os.system("cls")
 
 
 class DepthFirstAlgorithm:
@@ -9,21 +8,39 @@ class DepthFirstAlgorithm:
         self.grafo = grafo
         self.inicio = inicio
 
-    def __algorithm__(self):
-        visitados = set()
-        fila = deque([self.inicio])
+    def algorithm(self, vertice, visitados, arvore):
 
-        while fila:
-            vertice = fila.popleft()
+        if vertice not in visitados:
+            visitados.add(vertice)
+            arvore[vertice] = []
 
-            if vertice not in visitados:
-                print(vertice, end=' ')
-                visitados.add(vertice)
+            for vizinho in self.grafo[vertice]:
+                if vizinho not in visitados:
+                    arvore[vertice].append(vizinho)
+                    self.algorithm(vizinho, visitados, arvore)
 
-                for vizinho in self.grafo[vertice] - visitados:
-                    self.__algorithm__(self.grafo, vizinho, visitados)
+            self.print(arvore)
+
+    def print(self, arvore):
+        os.system("cls")
+        for vertice, filhos in arvore.items():
+            print(f"{vertice} -> {filhos}")
 
 
 if __name__ == "__main__":
-    DFS = DepthFirstAlgorithm()
-    DFS.__algorithm__()
+    grafo = {
+        "A": {"B", "C"},
+        "B": {"A", "D", "E"},
+        "C": {"A", "F"},
+        "D": {"B"},
+        "E": {"B", "F"},
+        "F": {"C", "E"},
+    }
+
+    inicio = "A"
+
+    DFS = DepthFirstAlgorithm(grafo, inicio)
+    visitados = set()
+    arvore = {}
+
+    DFS.algorithm(inicio, visitados, arvore)

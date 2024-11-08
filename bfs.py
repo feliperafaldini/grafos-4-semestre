@@ -1,7 +1,7 @@
 import os
 from collections import deque
 
-os.system('cls')
+os.system("cls")
 
 
 class BreadthFirstAlgorithm:
@@ -9,19 +9,41 @@ class BreadthFirstAlgorithm:
         self.grafo = grafo
         self.inicio = inicio
 
-    def __algorithm__(self):
+    def algorithm(self):
         visitados = set()
         fila = deque([self.inicio])
+        arvore = {}
 
         while fila:
             vertice = fila.popleft()
 
             if vertice not in visitados:
-                print(vertice, end=' ')
                 visitados.add(vertice)
-                fila.extend(self.grafo[vertice] - visitados)
+                arvore[vertice] = []
+                for vizinho in self.grafo[vertice]:
+                    if vizinho not in visitados:
+                        fila.append(vizinho)
+                        arvore[vertice].append(vizinho)
+
+                self.print(arvore)
+
+    def print(self, arvore):
+        os.system("cls")
+        for vertice, filhos in arvore.items():
+            print(f"{vertice} -> {filhos}")
 
 
 if __name__ == "__main__":
-    BFS = BreadthFirstAlgorithm()
-    BFS.__algorithm__()
+    grafo = {
+        "A": {"B", "C"},
+        "B": {"A", "D", "E"},
+        "C": {"A", "F"},
+        "D": {"B"},
+        "E": {"B", "F"},
+        "F": {"C", "E"},
+    }
+
+    inicio = "D"
+
+    BFS = BreadthFirstAlgorithm(grafo, inicio)
+    BFS.algorithm()
