@@ -43,7 +43,7 @@ if __name__ == "__main__":
         "F": {"C", "E"},
     }
 
-    inicio = "D"
+    inicio = "A"
 
     BFS = BreadthFirstAlgorithm(grafo, inicio)
     BFS.algorithm()
