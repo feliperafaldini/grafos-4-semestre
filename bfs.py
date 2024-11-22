@@ -5,45 +5,62 @@ os.system("cls")
 
 
 class BreadthFirstAlgorithm:
-    def __init__(self, grafo, inicio):
+    def __init__(self, grafo, inicio, objetivo=None):
         self.grafo = grafo
         self.inicio = inicio
+        self.objetivo = objetivo
 
-    def algorithm(self):
-        visitados = set()
-        fila = deque([self.inicio])
-        arvore = {}
-
+    def breadthFirstSearch(self, fila, visitados, caminho, objetivo):
         while fila:
-            vertice = fila.popleft()
+            vertice = fila.pop(0)
+            caminho.append(vertice)
+            visitados.add(vertice)
 
-            if vertice not in visitados:
-                visitados.add(vertice)
-                arvore[vertice] = []
-                for vizinho in self.grafo[vertice]:
-                    if vizinho not in visitados:
-                        fila.append(vizinho)
-                        arvore[vertice].append(vizinho)
+            if vertice == objetivo:
+                return caminho
 
-                self.print(arvore)
+            for vizinho in self.grafo[vertice]:
+                if vizinho not in visitados:
+                    fila.append(vizinho)
+                    visitados.add(vizinho)
 
-    def print(self, arvore):
-        os.system("cls")
-        for vertice, filhos in arvore.items():
-            print(f"{vertice} -> {filhos}")
+        return caminho
+
+    def search(self):
+        fila = [self.inicio]
+        visitados = set()
+        caminho = []
+        return self.breadthFirstSearch(fila, visitados, caminho, self.objetivo)
 
 
 if __name__ == "__main__":
     grafo = {
-        "A": {"B", "C"},
-        "B": {"A", "D", "E"},
-        "C": {"A", "F"},
-        "D": {"B"},
-        "E": {"B", "F"},
-        "F": {"C", "E"},
+        "A": ["B", "C", "D"],
+        "B": ["E", "F"],
+        "C": ["G"],
+        "D": ["H", "I"],
+        "E": ["J"],
+        "F": [],
+        "G": ["K"],
+        "H": ["L"],
+        "I": ["M", "N"],
+        "J": [],
+        "K": [],
+        "L": [],
+        "M": [],
+        "N": ["O", "P"],
+        "O": [],
+        "P": ["Q"],
+        "Q": [],
     }
 
     inicio = "A"
+    objetivo = "Q"
 
-    BFS = BreadthFirstAlgorithm(grafo, inicio)
-    BFS.algorithm()
+    bfs = BreadthFirstAlgorithm(grafo, inicio, objetivo)
+    resultado = bfs.search()
+
+    if objetivo:
+        print(f"Caminho até o objetivo '{objetivo}': {resultado}")
+    else:
+        print("Objetivo não encontrado.")

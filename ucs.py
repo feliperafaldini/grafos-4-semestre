@@ -1,56 +1,95 @@
-import heapq
+import os
+
+os.system("cls")
 
 
 class UniformCostSearch:
-    def __init__(self, graph):
-        self.graph = graph
+    def __init__(self, grafo):
+        self.grafo = grafo
 
-    def search(self, start, goal):
-        frontier = []
-        heapq.heappush(frontier, (0, start))
+    def uniformCostSearch(self, inicio, objetivo, visitados, custo_minimo, anterior):
+        fila = [(0, inicio)]
+        custo_minimo[inicio] = 0
 
-        min_cost = {start: 0}
+        while fila:
+            fila.sort()
+            custo_atual, vertice_atual = fila.pop(0)
 
-        came_from = {}
+            if vertice_atual == objetivo:
+                caminho = self._caminho(anterior, inicio, objetivo)
+                return custo_minimo[objetivo], caminho
 
-        while frontier:
-            current_cost, current_node = heapq.heappop(frontier)
+            if vertice_atual not in visitados:
+                visitados.add(vertice_atual)
 
-            if current_node == goal:
-                path = self._reconstruct_path(came_from, start, goal)
-                return min_cost[goal], path
+                for vizinho, peso_aresta in self.grafo[vertice_atual]:
+                    novo_custo = custo_atual + peso_aresta
 
-            for neighbor, edge_weight in self.graph[current_node]:
-                new_cost = current_cost + edge_weight
+                    if (
+                        vizinho not in custo_minimo
+                        or novo_custo < custo_minimo[vizinho]
+                    ):
+                        custo_minimo[vizinho] = novo_custo
+                        fila.append((novo_custo, vizinho))
+                        anterior[vizinho] = vertice_atual
 
-                if neighbor not in min_cost or new_cost < min_cost[neighbor]:
-                    min_cost[neighbor] = new_cost
-                    heapq.heappush(frontier, (new_cost, neighbor))
-                    came_from[neighbor] = current_node
+        return None, []
 
-    def _reconstruct_path(self, came_from, start, goal):
-        path = [goal]
-        while path[-1] != start:
-            current_node = path[-1]
-            path.append(came_from[current_node])
-        path.reverse()
-        return path
+    def search(self, inicio, objetivo):
+        visitados = set()
+        custo_min = {}
+        anterior = {}
+
+        return self.uniformCostSearch(inicio, objetivo, visitados, custo_min, anterior)
+
+    def _caminho(self, anterior, inicio, objetivo):
+        caminho = [objetivo]
+        while caminho[-1] != inicio:
+            no_atual = caminho[-1]
+            caminho.append(anterior[no_atual])
+
+        caminho.reverse()
+        return caminho
 
 
 if __name__ == "__main__":
-    graph = {
-        "A": [("B", 1), ("C", 4)],
-        "B": [("A", 1), ("C", 2), ("D", 5)],
-        "C": [("A", 4), ("B", 2), ("D", 1)],
-        "D": [("B", 5), ("C", 1)],
+    grafo = {
+        "A": [("B", 3), ("C", 6), ("D", 1)],
+        "B": [("A", 3), ("C", 2), ("E", 5)],
+        "C": [("A", 6), ("B", 2), ("D", 4), ("F", 1)],
+        "D": [("A", 1), ("C", 4), ("G", 7)],
+        "E": [("B", 5), ("F", 2), ("H", 3)],
+        "F": [("C", 1), ("E", 2), ("I", 4)],
+        "G": [("D", 7), ("J", 2)],
+        "H": [("E", 3), ("I", 6), ("J", 1)],
+        "I": [("F", 4), ("H", 6), ("K", 2)],
+        "J": [("G", 2), ("H", 1), ("L", 8)],
+        "K": [("I", 2), ("L", 5)],
+        "L": [("J", 8), ("K", 5), ("M", 2)],
+        "M": [("L", 2), ("N", 3)],
+        "N": [("M", 3), ("O", 6)],
+        "O": [("N", 6), ("P", 1)],
+        "P": [("O", 1), ("Q", 3)],
+        "Q": [("P", 3), ("R", 2)],
+        "R": [("Q", 2), ("S", 4)],
+        "S": [("R", 4), ("T", 3)],
+        "T": [("S", 3), ("U", 2)],
+        "U": [("T", 2), ("V", 5)],
+        "V": [("U", 5), ("W", 1)],
+        "W": [("V", 1), ("X", 2)],
+        "X": [("W", 2), ("Y", 3)],
+        "Y": [("X", 3), ("Z", 4)],
+        "Z": [("Y", 4)],
     }
 
-    ucs = UniformCostSearch(graph)
+    ucs = UniformCostSearch(grafo)
 
-    start_node = "A"
-    goal_node = "D"
+    inicio = "A"
+    objetivo = "Z"
 
-    cost, path = ucs.search(start_node, goal_node)
+    custo, caminho = ucs.search(inicio, objetivo)
 
-    print(f"Custo mínimo: {cost}")
-    print(f"Caminho: {path}")
+    if caminho:
+        print(f"Custo Mínimo: {custo}\nCaminho encontrado até o objetivo {objetivo}: {caminho}")
+    else:
+        print("Objetivo não encontrado")
